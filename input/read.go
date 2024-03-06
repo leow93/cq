@@ -1,4 +1,4 @@
-package main
+package input
 
 import (
 	"bufio"
@@ -8,12 +8,15 @@ import (
 	"os"
 )
 
-const MAX_BUFFER_SIZE = 1024 * 4 // 4KB is plenty for now
+// 4KB is plenty to allocate initially
+// append() will grow the array dynamically as needed
+const MAX_BUFFER_SIZE = 1024 * 4
 
-func read(reader *bufio.Reader) (error, []byte) {
+func Read(reader *bufio.Reader) (error, []byte) {
 	buf := make([]byte, 0, MAX_BUFFER_SIZE)
 	for {
 		tmp := make([]byte, 0, MAX_BUFFER_SIZE)
+		fmt.Println(len(buf), cap(buf))
 		n, err := reader.Read(tmp[:cap(tmp)])
 		buf = append(buf, tmp[:n]...)
 
@@ -21,11 +24,9 @@ func read(reader *bufio.Reader) (error, []byte) {
 			if err == nil {
 				continue
 			}
-
 			if err == io.EOF {
 				break
 			}
-
 			log.Fatal(err)
 		}
 
@@ -33,6 +34,7 @@ func read(reader *bufio.Reader) (error, []byte) {
 			return err, nil
 		}
 	}
+	fmt.Println(len(buf), cap(buf))
 	return nil, buf
 }
 
@@ -43,7 +45,7 @@ func readInputFile(filename string) string {
 	}
 	defer file.Close()
 	r := bufio.NewReader(file)
-	err, buf := read(r)
+	err, buf := Read(r)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -52,21 +54,16 @@ func readInputFile(filename string) string {
 
 func readFromStdin() string {
 	r := bufio.NewReader(os.Stdin)
-	err, buf := read(r)
+	err, buf := Read(r)
 	if err != nil {
 		log.Fatal(err)
 	}
 	return string(buf)
 }
 
-func readInput() string {
+func ReadInput() string {
 	if len(os.Args) > 1 {
 		return readInputFile(os.Args[1])
 	}
 	return readFromStdin()
-}
-
-func main() {
-	data := readInput()
-	fmt.Print(data)
 }
