@@ -5,36 +5,36 @@ import (
 	"strings"
 )
 
-type column struct {
-	name string
+type Column struct {
+	Name string
 }
-type row struct {
-	values map[string]string
+type Row struct {
+	Values map[string]string
 }
 type Table struct {
-	columns []column
-	rows    []row
+	Columns []Column
+	Rows    []Row
 }
 
-func parseColumns(header string) []column {
+func parseColumns(header string) []Column {
 	columns := strings.Split(header, ",")
-	var result []column
+	var result []Column
 	for _, name := range columns {
-		result = append(result, column{name: name})
+		result = append(result, Column{Name: name})
 	}
 	return result
 }
 
-func parseRows(columns []column, rows []string) []row {
-	var result []row
+func parseRows(columns []Column, rows []string) []Row {
+	var result []Row
 	for _, r := range rows {
 		rawValues := strings.Split(r, ",")
 		values := make(map[string]string, len(columns))
 		for i, v := range rawValues {
-			columnName := columns[i].name
+			columnName := columns[i].Name
 			values[columnName] = v
 		}
-		result = append(result, row{values: values})
+		result = append(result, Row{Values: values})
 	}
 	return result
 }
@@ -51,7 +51,7 @@ func Parser(input string) (error, Table) {
 	rows := parseRows(columns, lines[1:])
 
 	return nil, Table{
-		columns: columns,
-		rows:    rows,
+		Columns: columns,
+		Rows:    rows,
 	}
 }
