@@ -18,7 +18,7 @@ func TestToCsv(t *testing.T) {
 			},
 		}
 		expected := "name,age\nbob,30\njane,25\n"
-		actual := ToCsv(table)
+		_, actual := ToCsv(table)
 		if actual != expected {
 			t.Errorf("Expected %s, got %s", expected, actual)
 		}
@@ -36,7 +36,7 @@ func TestToCsv(t *testing.T) {
 			},
 		}
 		expected := "name,age\nbob,\njane,25\n"
-		actual := ToCsv(table)
+		_, actual := ToCsv(table)
 		if actual != expected {
 			t.Errorf("Expected %s, got %s", expected, actual)
 		}

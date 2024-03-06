@@ -8,11 +8,20 @@ import (
 	"log"
 )
 
+func chooseFormatter() output.Formatter {
+	return output.ToJson
+}
+
 func main() {
 	data := input.ReadInput()
 	err, table := csv.Parser(data)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Print(output.ToCsv(table))
+	formatter := chooseFormatter()
+	err, output := formatter(table)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Print(output)
 }

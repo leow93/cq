@@ -10,7 +10,7 @@ func header(columns []csv.Column) string {
 	return result[:len(result)-1] + "\n"
 }
 
-func ToCsv(table csv.Table) string {
+func ToCsv(table csv.Table) (error, string) {
 	result := header(table.Columns)
 	for _, r := range table.Rows {
 		for _, c := range table.Columns {
@@ -18,5 +18,5 @@ func ToCsv(table csv.Table) string {
 		}
 		result = result[:len(result)-1] + "\n"
 	}
-	return result
+	return nil, result
 }
