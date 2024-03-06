@@ -4,21 +4,41 @@ import (
 	"cq/csv"
 	"cq/input"
 	"cq/output"
+	"flag"
 	"fmt"
 	"log"
 )
 
-func chooseFormatter() output.Formatter {
-	return output.ToJson
+type Arguments struct {
+	formatter output.Formatter
+}
+
+func chooseFormatter(format *string) output.Formatter {
+	switch *format {
+	case "json":
+		return output.ToJson
+	default:
+		return output.ToCsv
+	}
+}
+
+func parseArguments(outputFormat *string) Arguments {
+	return Arguments{
+		formatter: chooseFormatter(outputFormat),
+	}
 }
 
 func main() {
+	outputFormat := flag.String("output", "csv", "Options are 'csv' (default) and 'json'. e.g. -output=json")
+	flag.Parse()
+
+	arguments := parseArguments(outputFormat)
 	data := input.ReadInput()
 	err, table := csv.Parser(data)
 	if err != nil {
 		log.Fatal(err)
 	}
-	formatter := chooseFormatter()
+	formatter := arguments.formatter
 	err, output := formatter(table)
 	if err != nil {
 		log.Fatal(err)

@@ -35,7 +35,7 @@ func Read(reader *bufio.Reader) (error, []byte) {
 	return nil, buf
 }
 
-func readInputFile(filename string) string {
+func _readInputFile(filename string) string {
 	file, err := os.Open(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -59,8 +59,5 @@ func readFromStdin() string {
 }
 
 func ReadInput() string {
-	if len(os.Args) > 1 {
-		return readInputFile(os.Args[1])
-	}
 	return readFromStdin()
 }
