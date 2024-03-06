@@ -2,21 +2,19 @@ package input
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"log"
 	"os"
 )
 
-// 4KB is plenty to allocate initially
+// MaxBufferSize 4KB is plenty to allocate initially
 // append() will grow the array dynamically as needed
-const MAX_BUFFER_SIZE = 1024 * 4
+const MaxBufferSize = 1024 * 4
 
 func Read(reader *bufio.Reader) (error, []byte) {
-	buf := make([]byte, 0, MAX_BUFFER_SIZE)
+	buf := make([]byte, 0, MaxBufferSize)
 	for {
-		tmp := make([]byte, 0, MAX_BUFFER_SIZE)
-		fmt.Println(len(buf), cap(buf))
+		tmp := make([]byte, 0, MaxBufferSize)
 		n, err := reader.Read(tmp[:cap(tmp)])
 		buf = append(buf, tmp[:n]...)
 
@@ -34,7 +32,6 @@ func Read(reader *bufio.Reader) (error, []byte) {
 			return err, nil
 		}
 	}
-	fmt.Println(len(buf), cap(buf))
 	return nil, buf
 }
 
