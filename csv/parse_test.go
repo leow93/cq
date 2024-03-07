@@ -81,8 +81,8 @@ func TestParser(t *testing.T) {
 	t.Run("it can parse a more complicated table with full sentences in the columns", func(t *testing.T) {
 		input := "date,description,severity\n"
 		input += "2024-01-01,"
-		desc := "\"To be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take arms against a sea of troubles And by opposing end them\". - Shakespeare,"
-		input += desc
+		desc := "\"To be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take arms against a sea of troubles And by opposing end them\". - Shakespeare"
+		input += desc + ","
 		input += "major"
 		err, table := Parser(input)
 		if err != nil {
