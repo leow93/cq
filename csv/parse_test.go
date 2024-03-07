@@ -77,4 +77,22 @@ func TestParser(t *testing.T) {
 			t.Errorf("Expected %v, got %v", expectedJane, jane)
 		}
 	})
+
+	t.Run("it can parse a more complicated table with full sentences in the columns", func(t *testing.T) {
+		input := "date,description,severity\n"
+		input += "2024-01-01,"
+		desc := "\"To be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take arms against a sea of troubles And by opposing end them\". - Shakespeare,"
+		input += desc
+		input += "major"
+		err, table := Parser(input)
+		if err != nil {
+			t.Errorf("Expected no error, got %s", err)
+		}
+		row := table.Rows[0].Values
+		expectedRow := map[string]string{"date": "2024-01-01", "description": desc, "severity": "major"}
+		if !mapEqual(row, expectedRow) {
+			t.Errorf("Expected %v, got %v", expectedRow, row)
+		}
+
+	})
 }

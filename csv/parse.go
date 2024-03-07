@@ -25,10 +25,38 @@ func parseColumns(header string) []Column {
 	return result
 }
 
+func getRawValues(row string) []string {
+	var result []string
+	temp := ""
+	ignoreCommaSeparation := false
+
+	for _, r := range []rune(row) {
+		if r == '"' {
+			ignoreCommaSeparation = !ignoreCommaSeparation
+		}
+
+		if r == ',' {
+			if ignoreCommaSeparation {
+				temp += ","
+			} else {
+				result = append(result, temp)
+				temp = ""
+			}
+		} else {
+			temp += string(r)
+		}
+	}
+
+	result = append(result, temp)
+
+	return result
+}
+
 func parseRows(columns []Column, rows []string) []Row {
 	var result []Row
+
 	for _, r := range rows {
-		rawValues := strings.Split(r, ",")
+		rawValues := getRawValues(r)
 		values := make(map[string]string, len(columns))
 		for i, v := range rawValues {
 			columnName := columns[i].Name
