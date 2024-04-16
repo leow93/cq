@@ -12,6 +12,7 @@ type Row struct {
 	Values map[string]string
 }
 type Table struct {
+	Name    string
 	Columns []Column
 	Rows    []Row
 }
@@ -79,6 +80,7 @@ func Parser(input string) (error, Table) {
 	rows := parseRows(columns, lines[1:])
 
 	return nil, Table{
+		Name:    "temp",
 		Columns: columns,
 		Rows:    rows,
 	}

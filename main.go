@@ -31,7 +31,6 @@ func parseArguments(outputFormat *string) Arguments {
 func main() {
 	outputFormat := flag.String("output", "csv", "Options are 'csv' (default) and 'json'. e.g. -output=json")
 	flag.Parse()
-
 	arguments := parseArguments(outputFormat)
 	data := input.ReadInput()
 	err, table := csv.Parser(data)
