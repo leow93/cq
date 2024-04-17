@@ -1,11 +1,11 @@
 package main
 
 import (
-	"cq/csv"
-	"cq/input"
-	"cq/output"
 	"flag"
 	"fmt"
+	"github.com/leow93/cq/internal/csv"
+	"github.com/leow93/cq/internal/input"
+	"github.com/leow93/cq/internal/output"
 	"log"
 )
 

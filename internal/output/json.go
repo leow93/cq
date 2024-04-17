@@ -1,8 +1,8 @@
 package output
 
 import (
-	"cq/csv"
 	"encoding/json"
+	"github.com/leow93/cq/internal/csv"
 )
 
 func ToJson(table csv.Table) (error, string) {

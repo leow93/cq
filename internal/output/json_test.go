@@ -1,7 +1,7 @@
 package output
 
 import (
-	"cq/csv"
+	"github.com/leow93/cq/internal/csv"
 	"testing"
 )
 

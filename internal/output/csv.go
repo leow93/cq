@@ -1,6 +1,6 @@
 package output
 
-import "cq/csv"
+import "github.com/leow93/cq/internal/csv"
 
 func header(columns []csv.Column) string {
 	var result string
