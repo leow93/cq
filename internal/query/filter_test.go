@@ -50,4 +50,19 @@ func TestParseFilters(t *testing.T) {
 		}
 		testEquality(t, expected, got)
 	})
+
+	t.Run("it parses lt filters", func(t *testing.T) {
+		input := "name=bob,age<30"
+		result := ParseFilters(input)
+		if len(result) != 2 {
+			t.Errorf("Expected 2 filters, got %d", len(result))
+		}
+		got := result[1]
+		expected := Filter{
+			Column:   "age",
+			Value:    "30",
+			Operator: Lt,
+		}
+		testEquality(t, expected, got)
+	})
 }

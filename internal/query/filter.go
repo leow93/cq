@@ -11,9 +11,10 @@ type Operator int
 const (
 	Eq Operator = iota + 1
 	Gt
+	Lt
 )
 
-var Operators = []string{"=", ">"}
+var Operators = []string{"=", ">", "<"}
 
 func (s Operator) String() string {
 	if s < Eq || s > Gt {
@@ -22,20 +23,14 @@ func (s Operator) String() string {
 	return Operators[s-1]
 }
 
-func (s Operator) IsValid() bool {
-	switch s {
-	case Eq:
-		return true
-	}
-	return false
-}
-
 func parseOperator(s string) (Operator, error) {
 	switch s {
 	case "=":
 		return Eq, nil
 	case ">":
 		return Gt, nil
+	case "<":
+		return Lt, nil
 	default:
 		return Eq, errors.New("unknown operator")
 	}
@@ -90,13 +85,11 @@ func buildFilter(x string) (Filter, error) {
 		Value:    value,
 		Operator: op,
 	}, nil
-
 }
 
 func ParseFilters(filters string) []Filter {
 	var result []Filter
 	filterStrings := strings.Split(filters, ",")
-	//xs := trimEach(filterStrings)
 	for _, x := range filterStrings {
 		filter, err := buildFilter(x)
 		if err == nil {
