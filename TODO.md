@@ -1,5 +1,5 @@
 Before release
-- [ ] Filtering ability (some column inference might be needed here for >, >= etc.)
-- [ ] Sorting ability ?
-- [ ] License
+- [x] Filtering ability (some column inference might be needed here for >, >= etc.)
+- [ ] Sorting ability
+- [x] License
 - [ ] Documentation
