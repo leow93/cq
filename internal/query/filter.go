@@ -9,23 +9,16 @@ import (
 type Operator int
 
 const (
-	Eq Operator = iota + 1
+	Eq Operator = iota
 	Gt
 	Gte
 	Lt
+	Lte
 )
 
-var Operators = []string{"=", ">", "<", ">="}
+var Operators = []string{">=", "<=", "=", ">", "<"}
 
-//
-//func (s Operator) String() string {
-//	if s < Eq || s > Lt {
-//		return fmt.Sprintf("Operator(%d)", int(s))
-//	}
-//	return Operators[s-1]
-//}
-
-func parseOperator(s string) (Operator, error) {
+func NewOperator(s string) (Operator, error) {
 	switch s {
 	case "=":
 		return Eq, nil
@@ -35,8 +28,27 @@ func parseOperator(s string) (Operator, error) {
 		return Lt, nil
 	case ">=":
 		return Gte, nil
+	case "<=":
+		return Lte, nil
 	default:
-		return Eq, errors.New("unknown operator")
+		return Eq, errors.New("Unknown operator")
+	}
+}
+
+func (op Operator) String() string {
+	switch op {
+	case Eq:
+		return "="
+	case Gt:
+		return ">"
+	case Gte:
+		return ">="
+	case Lt:
+		return "<"
+	case Lte:
+		return "<="
+	default:
+		return ""
 	}
 }
 
@@ -46,47 +58,53 @@ type Filter struct {
 	Operator Operator
 }
 
-func tryToken(s string, idx int) (string, string, Operator, error) {
-	if idx > len(Operators)-1 {
-		return "", "", Eq, errors.New("Unknown operator")
-	}
-
-	operator := Operators[idx]
-	xs := strings.Split(s, operator)
-	switch len(xs) {
-	case 2:
-		op, err := parseOperator(operator)
-		if err != nil {
-			return tryToken(s, idx+1)
+func findOperator(s string) (Operator, error) {
+	for _, op := range Operators {
+		if strings.Contains(s, op) {
+			operator, err := NewOperator(op)
+			if err != nil {
+				return Eq, err
+			}
+			return operator, nil
 		}
-		return xs[0], xs[1], op, nil
-	default:
-		return tryToken(s, idx+1)
+
 	}
+	return Eq, errors.New("Unknown operator")
 }
 
-/*
-Accepts filters of the form "name=bob,age>39"
-*/
-func buildFilter(x string) (Filter, error) {
-	column, value, op, err := tryToken(x, 0)
+func buildFilter(x string) (*Filter, error) {
+	operator, err := findOperator(x)
 	if err != nil {
-		return Filter{}, errors.New("Filter in wrong format")
+		return nil, err
 	}
-	return Filter{
+	parts := strings.Split(x, operator.String())
+	if len(parts) != 2 {
+		return nil, errors.New("Filter in wrong format")
+	}
+	column, value := parts[0], parts[1]
+
+	return &Filter{
 		Column:   column,
 		Value:    value,
-		Operator: op,
+		Operator: operator,
 	}, nil
 }
 
+/*
+ParseFilters
+Accepts filters of the form "name=bob,age>39"
+*/
 func ParseFilters(filters string) ([]Filter, error) {
+	if filters == "" {
+		return nil, nil
+	}
+
 	var result []Filter
 	filterStrings := strings.Split(filters, ",")
 	for _, x := range filterStrings {
 		filter, err := buildFilter(x)
 		if err == nil {
-			result = append(result, filter)
+			result = append(result, *filter)
 		} else {
 			return nil, err
 		}
@@ -107,6 +125,10 @@ func applyFilter(filter Filter, row csv.Row) bool {
 		return value > filter.Value
 	case Lt:
 		return value < filter.Value
+	case Gte:
+		return value >= filter.Value
+	case Lte:
+		return value <= filter.Value
 	default:
 		return true
 	}

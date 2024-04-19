@@ -49,7 +49,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	table = query.ApplyFilters(arguments.filter, table)
+	if arguments.filter != nil {
+		table = query.ApplyFilters(arguments.filter, table)
+	}
 	formatter := arguments.formatter
 	err, output := formatter(table)
 	if err != nil {
