@@ -2,7 +2,7 @@ package query
 
 import (
 	"errors"
-	"fmt"
+	"github.com/leow93/cq/internal/csv"
 	"strings"
 )
 
@@ -11,17 +11,19 @@ type Operator int
 const (
 	Eq Operator = iota + 1
 	Gt
+	Gte
 	Lt
 )
 
-var Operators = []string{"=", ">", "<"}
+var Operators = []string{"=", ">", "<", ">="}
 
-func (s Operator) String() string {
-	if s < Eq || s > Gt {
-		return fmt.Sprintf("Operator(%d)", int(s))
-	}
-	return Operators[s-1]
-}
+//
+//func (s Operator) String() string {
+//	if s < Eq || s > Lt {
+//		return fmt.Sprintf("Operator(%d)", int(s))
+//	}
+//	return Operators[s-1]
+//}
 
 func parseOperator(s string) (Operator, error) {
 	switch s {
@@ -31,6 +33,8 @@ func parseOperator(s string) (Operator, error) {
 		return Gt, nil
 	case "<":
 		return Lt, nil
+	case ">=":
+		return Gte, nil
 	default:
 		return Eq, errors.New("unknown operator")
 	}
@@ -40,17 +44,6 @@ type Filter struct {
 	Column   string
 	Value    string
 	Operator Operator
-}
-
-func trimEach(xs []string) []string {
-	result := make([]string, len(xs))
-	for _, x := range xs {
-		trimmed := strings.TrimSpace(x)
-		if len(trimmed) > 0 {
-			result = append(result, strings.TrimSpace(x))
-		}
-	}
-	return result
 }
 
 func tryToken(s string, idx int) (string, string, Operator, error) {
@@ -87,14 +80,47 @@ func buildFilter(x string) (Filter, error) {
 	}, nil
 }
 
-func ParseFilters(filters string) []Filter {
+func ParseFilters(filters string) ([]Filter, error) {
 	var result []Filter
 	filterStrings := strings.Split(filters, ",")
 	for _, x := range filterStrings {
 		filter, err := buildFilter(x)
 		if err == nil {
 			result = append(result, filter)
+		} else {
+			return nil, err
 		}
 	}
-	return result
+	return result, nil
+}
+
+func applyFilter(filter Filter, row csv.Row) bool {
+	value, ok := row.Values[filter.Column]
+	if !ok {
+		return false
+	}
+
+	switch filter.Operator {
+	case Eq:
+		return value == filter.Value
+	case Gt:
+		return value > filter.Value
+	case Lt:
+		return value < filter.Value
+	default:
+		return true
+	}
+}
+
+func ApplyFilters(filters []Filter, table csv.Table) csv.Table {
+	var rows []csv.Row
+
+	for _, row := range table.Rows {
+		for _, filter := range filters {
+			if applyFilter(filter, row) {
+				rows = append(rows, row)
+			}
+		}
+	}
+	return csv.NewTable(table.Columns, rows)
 }

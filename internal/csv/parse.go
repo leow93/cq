@@ -8,12 +8,26 @@ import (
 type Column struct {
 	Name string
 }
+
+func NewColumn(name string) Column {
+	return Column{Name: name}
+}
+
 type Row struct {
 	Values map[string]string
 }
+
+func NewRow(values map[string]string) Row {
+	return Row{Values: values}
+}
+
 type Table struct {
 	Columns []Column
 	Rows    []Row
+}
+
+func NewTable(cols []Column, rows []Row) Table {
+	return Table{Columns: cols, Rows: rows}
 }
 
 func parseColumns(header string) []Column {
@@ -71,15 +85,12 @@ func Parser(input string) (error, Table) {
 	lines := strings.Split(input, "\n")
 
 	if len(lines) == 0 {
-		return errors.New("No input"), Table{}
+		return errors.New("No input"), NewTable(nil, nil)
 	}
 
 	header := lines[0]
 	columns := parseColumns(header)
 	rows := parseRows(columns, lines[1:])
 
-	return nil, Table{
-		Columns: columns,
-		Rows:    rows,
-	}
+	return nil, NewTable(columns, rows)
 }
