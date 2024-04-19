@@ -14,9 +14,10 @@ const (
 	Gte
 	Lt
 	Lte
+	Neq
 )
 
-var Operators = []string{">=", "<=", "=", ">", "<"}
+var Operators = []string{"!=", ">=", "<=", "=", ">", "<"}
 
 func NewOperator(s string) (Operator, error) {
 	switch s {
@@ -30,6 +31,9 @@ func NewOperator(s string) (Operator, error) {
 		return Gte, nil
 	case "<=":
 		return Lte, nil
+	case "!=":
+		return Neq, nil
+
 	default:
 		return Eq, errors.New("Unknown operator")
 	}
@@ -47,6 +51,8 @@ func (op Operator) String() string {
 		return "<"
 	case Lte:
 		return "<="
+	case Neq:
+		return "!="
 	default:
 		return ""
 	}
@@ -129,6 +135,8 @@ func applyFilter(filter Filter, row csv.Row) bool {
 		return value >= filter.Value
 	case Lte:
 		return value <= filter.Value
+	case Neq:
+		return value != filter.Value
 	default:
 		return true
 	}

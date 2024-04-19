@@ -113,6 +113,24 @@ func TestParseFilters(t *testing.T) {
 		}
 		testEquality(t, expected, got)
 	})
+
+	t.Run("it parses neq filters", func(t *testing.T) {
+		input := "age!=30"
+		result, err := ParseFilters(input)
+		if err != nil {
+			t.Errorf("Unexpected error: %v", err)
+		}
+		if len(result) != 1 {
+			t.Errorf("Expected 1 filter, got %d", len(result))
+		}
+		got := result[0]
+		expected := Filter{
+			Column:   "age",
+			Value:    "30",
+			Operator: Neq,
+		}
+		testEquality(t, expected, got)
+	})
 }
 
 func TestApplyFilters(t *testing.T) {
@@ -154,6 +172,11 @@ func TestApplyFilters(t *testing.T) {
 			name:           "less than or equal filter",
 			filter:         "age<=30",
 			expectedPerson: "bob",
+		},
+		{
+			name:           "not equal filter",
+			filter:         "age!=30",
+			expectedPerson: "alice",
 		},
 	}
 

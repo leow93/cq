@@ -38,7 +38,7 @@ func parseArguments(outputFormat *string, filter *string) (*Arguments, error) {
 
 func main() {
 	outputFormat := flag.String("output", "csv", "Options are 'csv' (default) and 'json'. e.g. -output=json")
-	filter := flag.String("filter", "", "e.g. -filter=column1=value1,column2=value2")
+	filter := flag.String("filter", "", "e.g. -filter=column1=value1,column2<=value2")
 	flag.Parse()
 	arguments, err := parseArguments(outputFormat, filter)
 	if err != nil {
