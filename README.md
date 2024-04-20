@@ -2,9 +2,6 @@
 
 `cq` is a small command line utility for parsing and filtering CSV data.
 
-## Installation
-TODO
-
 ## Usage
 
 Given a file, `data.csv`:
