@@ -35,7 +35,3 @@ And see the following output:
   }
 ]
 ```
-
-```sh
-cat mydata.csv | cq --output=json 
-```
